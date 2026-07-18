@@ -2,8 +2,17 @@ console.log("Pragati");
 import express from "express"
 import connectDB from "./database/db.js"
 import "dotenv/config"
+
+import userRoute from "./routes/userRoute.js"
+
 const app = express()
 const PORT = process.env.PORT || 5555
+
+//middleware
+app.use(express.json())
+
+
+app.use("/api/v1/user",userRoute)
 
 app.listen(PORT, () => {
     connectDB()

@@ -21,7 +21,6 @@ const userSchema = new mongoose.Schema({
     city:{type:String},
     zipcode:{type:String},
     phoneNo:{type:String},
-    address:{type:String},
 },{timestamps:true})
 
 export const User = mongoose.model("User",userSchema)
