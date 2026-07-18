@@ -1,9 +1,11 @@
 console.log("Pragati");
 import express from "express"
+import connectDB from "./database/db.js"
 
 const app = express()
-const PORT = 5555
+const PORT = process.env.PORT || 5555
 
 app.listen(PORT, () => {
+    connectDB()
     console.log(`Server is listening at port ${PORT}`)
 })
