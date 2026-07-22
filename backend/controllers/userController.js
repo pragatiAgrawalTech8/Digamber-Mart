@@ -169,11 +169,11 @@ export const login = async (req, res) => {
 export const logout = async (req, res) => {
     try {
         const userId = req.id
-        await Session.deleteMany({userId:userId})
-        await User.findByIdAndUpdate(userId,{isLoggedIn:false})
+        await Session.deleteMany({ userId: userId })
+        await User.findByIdAndUpdate(userId, { isLoggedIn: false })
         return res.status(200).json({
-            success:true,
-            message:"User logged out successfully"
+            success: true,
+            message: "User logged out successfully"
         })
     } catch (error) {
         return res.status(500).json({
@@ -183,14 +183,14 @@ export const logout = async (req, res) => {
     }
 }
 
-export const forgotPassword = async (req,res)=>{
+export const forgotPassword = async (req, res) => {
     try {
-        const {email} = req.body
-        const user = await User.findOne({email})
-        if(!user){
+        const { email } = req.body
+        const user = await User.findOne({ email })
+        if (!user) {
             return res.status(400).json({
-                success:false,
-                message:"User not found"
+                success: false,
+                message: "User not found"
             })
         }
         const otp = Math.floor(100000 + Math.random() * 900000);
@@ -201,21 +201,102 @@ export const forgotPassword = async (req,res)=>{
         user.otpExpiry = otpExpiry
 
         await user.save()
-        await sendOTPMail(otp,email)
+        await sendOTPMail(otp, email)
 
         return res.status(200).json({
-            success:false,
-            message:"Otp sent to email successfully"
+            success: false,
+            message: "Otp sent to email successfully"
         })
     } catch (error) {
         return res.status(500).json({
-            success:false,
-            message:error.message
+            success: false,
+            message: error.message
         })
     }
 }
 
+export const verifyOTP = async (req, res) => {
+    try {
+        const { otp } = req.body
+        const email = req.params.email
+        if (!otp) {
+            return res.status(400).json({
+                success: false,
+                message: "Otp is required"
+            })
+        }
+        const user = await User.findOne({ email })
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: "User not found"
+            })
+        }
+        if (!user.otp || !user.otpExpiry) {
+            return res.status(400).json({
+                success: false,
+                message: "Otp is not generated or already verified"
+            })
+        }
+        if (user.otpExpiry < new Date()) {
+            return res.status(400).json({
+                success: false,
+                message: "Otp has expired please request a new one"
+            })
+        }
+        if (otp !== user.otp) {
+            return res.status(400).json({
+                success: false,
+                message: "Otp is Invalid"
+            })
+        }
+        user.otp = null
+        user.otpExpiry = null
+        await user.save()
+        return res.status(200).json({
+            success: true,
+            message: "Otp verified successfully"
+        })
 
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "error.message"
+        })
+    }
+}
+
+export const changePassword = async (req, res) => {
+    try {
+        const { newPassword, confirmPassword } = req.body
+        const { email } = req.params
+        const user = await User.findOne({ email })
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: "User not found"
+            })
+        }
+        if (!newPassword || !confirmPassword) {
+            return res.status(400).json({
+                success: false,
+                message: "Password do not match"
+            })
+        }
+        const hashedPassword = await bcrypt.hash(newPassword, 10)
+        user.password = hashedPassword
+        await user.save()
+        return res.status(200).json({
+            success: true,
+            message: "Password changed successfully"
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        })
+    }
+}
 
 
 
