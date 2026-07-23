@@ -1,5 +1,5 @@
 import mongoose from "mongoose"
-
+// connection for mongodb database.
  async function connectDB (){
     try {
         console.log(process.env.MONGO_URI);
