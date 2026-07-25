@@ -16,8 +16,11 @@ app.use(cors({
 }))
 
 app.use("/api/v1/user",userRoute)
-
-app.listen(PORT, () => {
-    connectDB()
-    console.log(`Server is listening at port ${PORT}`)
+await connectDB()
+.then(()=>{
+    
+    
+    app.listen(PORT, () => {
+        console.log(`Server is listening at port ${PORT}`)
+    })
 })

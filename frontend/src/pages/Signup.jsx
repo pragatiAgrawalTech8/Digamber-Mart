@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -10,7 +10,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff,Loader2 } from "lucide-react";
 import { Link,useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import axios from "axios"
@@ -25,6 +25,9 @@ const Signup = () => {
     password: "",
   })
   const navigate = useNavigate()
+  useEffect(() => {
+  toast("Test toast - working!");
+}, []);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -36,6 +39,7 @@ const Signup = () => {
     e.preventDefault()
     console.log(formData);
     try {
+      setLoading(true)
       const res = await axios.post("http://localhost:5555/api/v1/user/register",formData,{
         headers:{
           "Content-Type":"application/json"
@@ -46,9 +50,13 @@ const Signup = () => {
         toast.success(res.data.message)
       }
     } catch (error) {
-  console.log(error);
+  console.log("Full error:", error);
+  console.log("Response data:", error?.response?.data);
+  console.log("Response status:", error?.response?.status);
   const message = error?.response?.data?.message || "Something went wrong. Please try again.";
   toast.error(message);
+} finally{
+  setLoading(false)
 }
   }
   return (
@@ -136,9 +144,21 @@ const Signup = () => {
      
         </CardContent>
         <CardFooter className="flex flex-col gap-2">
-          <Button onClick={submitHandler} type="submit" className="w-full">
-            Sign Up
-          </Button>
+        <Button
+  onClick={submitHandler}
+  type="submit"
+  disabled={loading}
+  className="w-full cursor-pointer bg-pink-600 hover:bg-pink-400"
+>
+  {loading ? (
+    <>
+      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+      Please wait...
+    </>
+  ) : (
+    "Sign Up"
+  )}
+</Button>
           <p className="text-gray-700 text-sm">
             Already have an account?{" "}
             <Link
