@@ -32,7 +32,7 @@ const NavBar = () => {
             </span>
           </Link>
           {user ? (
-            <Button className="bg-pink-600 text-white cursor-pointer"></Button>
+            <Button className="bg-pink-600 text-white cursor-pointer">Login</Button>
           ) : (
             <Button className="bg-gradient-to-tl from-blue-600 to-purple-600 text-white cursor-pointer">
               Login
