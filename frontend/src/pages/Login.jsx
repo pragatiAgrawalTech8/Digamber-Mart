@@ -14,16 +14,18 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/redux/userSlice";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-  
     email: "",
     password: "",
   });
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   useEffect(() => {
     toast("Test toast - working!");
   }, []);
@@ -50,6 +52,8 @@ const Login = () => {
       );
       if (res.data.success) {
         navigate("/");
+        dispatch(setUser(res.data.user));
+        localStorage.setItem("accessToken",res.data.accessToken)
         toast.success(res.data.message);
       }
     } catch (error) {

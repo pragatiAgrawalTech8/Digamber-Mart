@@ -3,8 +3,34 @@ import Logo from "./Logo";
 import { ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
+import axios from "axios";
+import { toast } from "sonner";
+import { useSelector, useDispatch } from "react-redux";
+import { setUser } from "../redux/userSlice";
 const NavBar = () => {
-  const user = true;
+  const { user } = useSelector((store) => store.user);
+  const accessToken = localStorage.getItem("accessToken");
+  const dispatch = useDispatch()
+  const logoutHandler = async () => {
+    try {
+      const res = await axios.post(
+        "http://localhost:5555/api/v1/user/logout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+
+      if (res.data.success) {
+        dispatch(setUser(null))
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <header className="bg-pink-50 fixed w-full z-20 border-b border-pink-200">
       <div className="max-w-7xl mx-auto flex justify-between items-center py-3">
@@ -21,7 +47,7 @@ const NavBar = () => {
             </Link>
             {user && (
               <Link to={"/profile"}>
-                <li>Hello User</li>
+                <li>Hello, {user.firstName}</li>
               </Link>
             )}
           </ul>
@@ -32,11 +58,18 @@ const NavBar = () => {
             </span>
           </Link>
           {user ? (
-            <Button className="bg-pink-600 text-white cursor-pointer">Login</Button>
-          ) : (
-            <Button className="bg-gradient-to-tl from-blue-600 to-purple-600 text-white cursor-pointer">
-              Login
+            <Button
+              onClick={logoutHandler}
+              className="bg-pink-600 text-white cursor-pointer"
+            >
+              Logout
             </Button>
+          ) : (
+            <Link to="/login">
+              <Button className="bg-gradient-to-tl from-blue-600 to-purple-600 text-white cursor-pointer">
+                Login
+              </Button>
+            </Link>
           )}
         </nav>
       </div>

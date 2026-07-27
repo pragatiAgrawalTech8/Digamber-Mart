@@ -18,13 +18,13 @@ const Footer = () => {
             <img src="/Ekart.png" alt="" className="w-32" />
           </Link>
           <p className="mt-2 text-sm">
-            Powering Your World with the Best in Electronics.
+            Bringing elegance to your dining table with premium-quality crockery.
           </p>
           <p className="mt-2 text-sm">
-            123 Electronics St, Style City, NY 10001
+            Digamber crockery, nera Indian Coffee House, Sadar Road Jabalpur,Madhya Pradesh
           </p>
           <p className="text-sm">Email: rishuzzworld@gmail.com</p>
-          <p className="text-sm">Phone: (123) 456-7890</p>
+          <p className="text-sm">Phone: 9302568817</p>
         </div>
         {/* customer service link */}
         <div className="mb-6 md:mb-0">
