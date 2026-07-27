@@ -8,6 +8,7 @@ import Login from "./pages/Login";
 import Verify from "./pages/Verify";
 import VerifyEmail from "./pages/VerifyEmail";
 import Footer from "./components/Footer";
+
 const router = createBrowserRouter([
   {
     path: "/",
