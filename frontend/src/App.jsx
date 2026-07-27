@@ -7,6 +7,7 @@ import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Verify from "./pages/Verify";
 import VerifyEmail from "./pages/VerifyEmail";
+import Profile from "./pages/Profile";
 import Footer from "./components/Footer";
 
 const router = createBrowserRouter([
@@ -49,6 +50,14 @@ const router = createBrowserRouter([
     element: (
       <>
         <VerifyEmail />
+      </>
+    ),
+  },
+  {
+    path: "/profile",
+    element: (
+      <>
+        <NavBar/><Profile />
       </>
     ),
   },
