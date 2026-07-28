@@ -4,6 +4,7 @@ import connectDB from "./database/db.js"
 import "dotenv/config"
 import cors from "cors"
 import userRoute from "./routes/userRoute.js"
+import productRoute from "./routes/productRoute.js"
 
 const app = express()
 const PORT = process.env.PORT || 5555
@@ -16,6 +17,7 @@ app.use(cors({
 }))
 
 app.use("/api/v1/user",userRoute)
+app.use("/api/v1/product",productRoute)
 await connectDB()
 .then(()=>{
     

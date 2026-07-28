@@ -17,16 +17,18 @@ const productSchema = new mongoose.Schema(
             required: true,
         },
 
-        productImg: {
-            url: {
-                type: String,
-                required: true,
+        productImg: [
+            {
+                url: {
+                    type: String,
+                    required: true,
+                },
+                public_id: {
+                    type: String,
+                    required: true,
+                },
             },
-            public_id: {
-                type: String,
-                required: true,
-            },
-        },
+        ],
 
         productPrice: {
             type: Number,
