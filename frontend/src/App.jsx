@@ -9,6 +9,7 @@ import Verify from "./pages/Verify";
 import VerifyEmail from "./pages/VerifyEmail";
 import Profile from "./pages/Profile";
 import Products from "./pages/Products";
+import Cart from "./pages/Cart";
 import Footer from "./components/Footer";
 
 const router = createBrowserRouter([
@@ -69,6 +70,15 @@ const router = createBrowserRouter([
       <>
         <NavBar />
         <Products />
+      </>
+    ),
+  },
+  {
+    path: "/cart",
+    element: (
+      <>
+        <NavBar />
+        <Cart />
       </>
     ),
   },
