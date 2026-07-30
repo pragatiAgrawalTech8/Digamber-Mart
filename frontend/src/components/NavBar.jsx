@@ -7,8 +7,10 @@ import axios from "axios";
 import { toast } from "sonner";
 import { useSelector, useDispatch } from "react-redux";
 import { setUser } from "../redux/userSlice";
+
 const NavBar = () => {
   const { user } = useSelector((store) => store.user);
+  const {cart} = useSelector(store=> store.product)
   const accessToken = localStorage.getItem("accessToken");
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -55,7 +57,7 @@ const NavBar = () => {
           <Link to={"/cart"} className="relative">
             <ShoppingCart />
             <span className="bg-pink-500 rounded-full absolute text-white -top-3 -right-5 px-2">
-              0
+              {cart?.items?.length || 0}
             </span>
           </Link>
           {user ? (

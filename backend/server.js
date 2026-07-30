@@ -20,11 +20,11 @@ app.use(cors({
 app.use("/api/v1/user",userRoute)
 app.use("/api/v1/product",productRoute)
 app.use("/api/v1/cart", cartRoute)
-await connectDB()
-.then(()=>{
-    
-    
-    app.listen(PORT, () => {
-        console.log(`Server is listening at port ${PORT}`)
-    })
-})
+try {
+  await connectDB();
+  app.listen(PORT, () => {
+    console.log(`Server is listening at port ${PORT}`);
+  });
+} catch (error) {
+  console.log("Failed to start server", error);
+}
