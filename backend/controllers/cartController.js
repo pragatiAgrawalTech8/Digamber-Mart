@@ -102,11 +102,16 @@ export const updateQuantity = async (req, res) => {
 
     cart.totalPrice = cart.items.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
+    
     await cart.save();
-
     cart = await cart.populate("items.productId");
 
-    res.status(200).json({ success: true, cart });
+
+    res.status(200).json({
+      success: true,
+      message: "Cart updated successfully", 
+      cart
+    });
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -128,8 +133,9 @@ export const removeFromCart = async (req, res) => {
 
     cart.items = cart.items.filter(item => item.productId.toString() !== productId);
     cart.totalPrice = cart.items.reduce((acc, item) => acc + item.price * item.quantity, 0);
-
+   
     await cart.save();
+    cart = await cart.populate("items.productId");
     res.status(200).json({
       success: true,
       cart

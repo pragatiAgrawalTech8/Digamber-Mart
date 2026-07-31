@@ -12,6 +12,7 @@ const NavBar = () => {
   const { user } = useSelector((store) => store.user);
   const {cart} = useSelector(store=> store.product)
   const accessToken = localStorage.getItem("accessToken");
+  const admin = user?.role === "admin" ? true : false
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const logoutHandler = async () => {
@@ -53,6 +54,11 @@ const NavBar = () => {
                 <li>Hello, {user.firstName}</li>
               </Link>
             )}
+            {user && user.role === "admin" && (
+  <Link to={"/dashboard"}>
+    <li>Dashboard</li>
+  </Link>
+)}
           </ul>
           <Link to={"/cart"} className="relative">
             <ShoppingCart />

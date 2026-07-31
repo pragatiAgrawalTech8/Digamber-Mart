@@ -9,8 +9,18 @@ import Verify from "./pages/Verify";
 import VerifyEmail from "./pages/VerifyEmail";
 import Profile from "./pages/Profile";
 import Products from "./pages/Products";
+import SingleProduct from "./pages/SingleProduct";
 import Cart from "./pages/Cart";
 import Footer from "./components/Footer";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Dashboard from './pages/Dashboard'
+import AdminSales from './pages/admin/AdminSales'
+import AddProduct from './pages/admin/AddProduct'
+import AdminProduct from './pages/admin/AdminProduct'
+import AdminOrders from './pages/admin/AdminOrders'
+import ShowUserOrders from './pages/admin/ShowUserOrders'
+import AdminUsers from './pages/admin/AdminUsers'
+import UserInfo from './pages/admin/UserInfo'
 
 const router = createBrowserRouter([
   {
@@ -58,10 +68,10 @@ const router = createBrowserRouter([
   {
     path: "/profile/:userId",
     element: (
-      <>
+      <ProtectedRoute>
         <NavBar />
         <Profile />
-      </>
+      </ProtectedRoute>
     ),
   },
   {
@@ -74,13 +84,63 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/cart",
+    path: "/products/:id",
     element: (
       <>
         <NavBar />
-        <Cart />
+        <SingleProduct/>
       </>
     ),
+  },
+  {
+    path: "/cart",
+    element: (
+      <ProtectedRoute>
+        <NavBar />
+        <Cart />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/dashboard",
+    element:
+    (<ProtectedRoute adminOnly={true}><Dashboard /></ProtectedRoute>)
+    ,
+    children:[
+      {
+        path:"sales",
+        element: <AdminSales/>
+      },
+      {
+        path:"add-product",
+        element: <AddProduct />
+      },
+      {
+        path:"products",
+        element: <AdminProduct />
+      },
+      {
+        path:"orders",
+        element: <AdminOrders />
+      },
+      {
+        path:"users/orders/:userId",
+        element: <ShowUserOrders />
+      },
+      {
+        path:"users",
+        element: <AdminUsers />
+      },
+      {
+        path:"user/:id",
+        element: <UserInfo />
+      },
+    
+      {
+        path:"sales",
+        element: <UserInfo />
+      },
+    ]
   },
 ]);
 

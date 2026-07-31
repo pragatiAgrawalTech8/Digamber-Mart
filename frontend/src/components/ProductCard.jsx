@@ -42,6 +42,7 @@ const ProductCard = ({ product, loading }) => {
         ) : (
           <img
             src={productImg[0]?.url}
+            onClick={()=>navigate(`/products/${product._id}`)}
             alt=""
             className="w-full h-full transition-transform duration-300 hover:scale-105 cursor-pointer"
           />
