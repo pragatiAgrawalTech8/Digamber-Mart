@@ -1,3 +1,5 @@
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -9,19 +11,19 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import ImageUpload from "@/components/ImageUpload";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
-import { Loader2 } from "lucide-react";
 import { setProducts } from "@/redux/productSlice";
-import axios from "axios"
+import axios from "axios";
+import ImageUpload from "@/components/ImageUpload";
+import { useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react";
 
 const AddProduct = () => {
   const accessToken = localStorage.getItem("accessToken");
+  const { products } = useSelector((store) => store.product);
   const dispatch = useDispatch();
-  const {products} = useSelector(store => store.product)
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [productData, setProductData] = useState({
     productName: "",
@@ -34,7 +36,6 @@ const AddProduct = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-
     setProductData((prev) => ({
       ...prev,
       [name]: value,
@@ -42,10 +43,9 @@ const AddProduct = () => {
   };
 
   const submitHandler = async (e) => {
+    console.log(import.meta.env.VITE_URL);
     e.preventDefault();
-
     const formData = new FormData();
-
     formData.append("productName", productData.productName);
     formData.append("productPrice", productData.productPrice);
     formData.append("productDesc", productData.productDesc);
@@ -53,7 +53,7 @@ const AddProduct = () => {
     formData.append("brand", productData.brand);
 
     if (productData.productImg.length === 0) {
-      toast.error("Please select at least one image");
+      toast.error("Please select at least one image.");
       return;
     }
 
@@ -64,7 +64,7 @@ const AddProduct = () => {
     try {
       setLoading(true);
       const res = await axios.post(
-        "http://localhost:5555/api/v1/product/add",
+        `${import.meta.env.VITE_URL}/api/v1/product/add`,
         formData,
         {
           headers: {
@@ -75,27 +75,21 @@ const AddProduct = () => {
       if (res.data.success) {
         dispatch(setProducts([...products, res.data.product]));
         toast.success(res.data.message);
-      }
-
-      console.log(res.data);
-
-      if (res.data.success) {
-        toast.success(res.data.message);
+        navigate("/dashboard/products");
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="pl-12 pr-20 mx-auto px-4 bg-gray-100">
+    <div className="pl-[350px] py-10 pr-20 mx-auto px-4 bg-gray-100">
       <Card className="w-full my-20">
         <CardHeader>
           <CardTitle>Add Product</CardTitle>
-          <CardDescription>Enter Product details below</CardDescription>
+          <CardDescription>Enter product details below</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-2">
@@ -114,9 +108,9 @@ const AddProduct = () => {
               <Label>Price</Label>
               <Input
                 type="number"
+                name="productPrice"
                 value={productData.productPrice}
                 onChange={handleChange}
-                name="productPrice"
                 placeholder=""
                 required
               />
@@ -140,7 +134,7 @@ const AddProduct = () => {
                   name="category"
                   value={productData.category}
                   onChange={handleChange}
-                  placeholder="Ex-mobile"
+                  placeholder="Ex-Mobile"
                   required
                 />
               </div>
@@ -161,24 +155,24 @@ const AddProduct = () => {
               setProductData={setProductData}
             />
           </div>
-          <CardFooter className="flex-col gap-2">
-            <Button
-              disabled={loading}
-              onClick={submitHandler}
-              className="w-full bg-pink-600"
-              type="submit"
-            >
-              {loading ? (
-                <span className="flex items-center gap-2">
-                  <Loader2 className="animate-spin" />
-                  Please Wait...
-                </span>
-              ) : (
-                "Add Product"
-              )}
-            </Button>
-          </CardFooter>
         </CardContent>
+        <CardFooter className="flex-col gap-2">
+          <Button
+            disabled={loading}
+            onClick={submitHandler}
+            type="submit"
+            className="w-full bg-pink-600"
+          >
+            {loading ? (
+              <span className="flex gap-1 items-center">
+                <Loader2 className="animate-spin " />
+                Please Wait
+              </span>
+            ) : (
+              "Add Product"
+            )}
+          </Button>
+        </CardFooter>
       </Card>
     </div>
   );
