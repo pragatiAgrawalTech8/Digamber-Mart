@@ -104,7 +104,7 @@ const router = createBrowserRouter([
   {
     path: "/dashboard",
     element:
-    (<ProtectedRoute adminOnly={true}><Dashboard /></ProtectedRoute>)
+    (<ProtectedRoute adminOnly={true}><NavBar/><Dashboard /></ProtectedRoute>)
     ,
     children:[
       {

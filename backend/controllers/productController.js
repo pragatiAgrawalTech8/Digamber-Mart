@@ -3,6 +3,7 @@ import cloudinary from "../utils/cloudinary.js";
 import getDataUri from "../utils/dataUri.js";
 
 export const addProduct = async (req, res) => {
+  console.log("🔥 addProduct called")
     try {
         const {
             productName,
@@ -59,6 +60,7 @@ export const addProduct = async (req, res) => {
             product: newProduct,
         });
     } catch (error) {
+      console.log(error)
         return res.status(500).json({
             success: false,
             message: error.message,
