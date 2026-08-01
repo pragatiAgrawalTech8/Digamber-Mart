@@ -1,6 +1,6 @@
 import express from "express"
 
-import { register, verify, reVerify, login, logout, forgotPassword, verifyOTP, changePassword, allUser, updateUser } from "../controllers/userController.js"
+import { register, verify, reVerify, login, logout, forgotPassword, verifyOTP, changePassword, allUser, updateUser,getSingleUser } from "../controllers/userController.js"
 import {isAdmin,isAuthenticated} from "../middleware/isAuthenticated.js"
 import {singleUpload} from "../middleware/multer.js"
 
@@ -16,6 +16,6 @@ router.post("/verify-otp/:email", verifyOTP)
 router.post("/change-password/:email", changePassword)
 router.get("/all-user",isAuthenticated,isAdmin, allUser)
 router.put("/update/:id",isAuthenticated,singleUpload,updateUser)
-
+router.get("/get-user/:id", isAuthenticated, getSingleUser)
 
 export default router

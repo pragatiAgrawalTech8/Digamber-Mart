@@ -224,7 +224,7 @@ const Cart = () => {
                     <Button variant="outline">Apply</Button>
                   </div>
 
-                  <Button className="w-full bg-pink-600">
+                  <Button onClick={()=>navigate("/address")} className="w-full bg-pink-600">
                     PLACE ORDER
                   </Button>
 

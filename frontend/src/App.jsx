@@ -14,6 +14,7 @@ import Cart from "./pages/Cart";
 import Footer from "./components/Footer";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from './pages/Dashboard'
+import AddressForm from './pages/AddressForm'
 import AdminSales from './pages/admin/AdminSales'
 import AddProduct from './pages/admin/AddProduct'
 import AdminProduct from './pages/admin/AdminProduct'
@@ -102,6 +103,14 @@ const router = createBrowserRouter([
     ),
   },
   {
+    path: "/address",
+    element: (
+      <ProtectedRoute>
+        <AddressForm/>
+      </ProtectedRoute>
+    ),
+  },
+  {
     path: "/dashboard",
     element:
     (<ProtectedRoute adminOnly={true}><NavBar/><Dashboard /></ProtectedRoute>)
@@ -132,12 +141,7 @@ const router = createBrowserRouter([
         element: <AdminUsers />
       },
       {
-        path:"user/:id",
-        element: <UserInfo />
-      },
-    
-      {
-        path:"sales",
+        path:"users/:id",
         element: <UserInfo />
       },
     ]

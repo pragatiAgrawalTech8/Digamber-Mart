@@ -5,6 +5,8 @@ import jwt from "jsonwebtoken"
 import { verifyEmail } from "../emailVerify/verifyemail.js";
 import { Session } from "../models/sessionModel.js"
 import { sendOTPMail } from "../emailVerify/sendOTPMail.js";
+import cloudinary from "../config/cloudinary.js";
+
 export const register = async (req, res) => {
     try {
         const { firstName, lastName, email, password } = req.body
@@ -346,7 +348,7 @@ export const updateUser = async (req, res) => {
     const userIdToUpdate = req.params.id; // the ID of the user we want to update
     const loggedInUser = req.user; // from isAuthenticated middleware
     const { firstName, lastName, address, city, zipCode, phoneNo, role } = req.body;
-
+  
     // Check if user is authorized to update this profile
     if (loggedInUser._id.toString() !== userIdToUpdate && loggedInUser.role !== 'admin') {
       return res.status(403).json({
@@ -416,6 +418,32 @@ export const updateUser = async (req, res) => {
       success: false,
       message: "Internal Server Error",
       error: error.message // Include error message for debugging
+    });
+  }
+};
+
+export const getSingleUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findById(id).select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: error.message,
     });
   }
 };
