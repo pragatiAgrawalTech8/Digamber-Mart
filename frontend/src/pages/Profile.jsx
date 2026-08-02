@@ -90,8 +90,11 @@ const Profile = () => {
     }
   };
   return (
-    <div className="pt-32 min-h-screen bg-gray-100 flex justify-center items-start">
-      <Tabs defaultValue="profile" className="max-w-7xl mx-auto items-center">
+    <div className="pt-32 min-h-screen bg-gray-100 flex justify-center items-start px-4">
+      <Tabs
+        defaultValue="profile"
+        className="max-w-7xl mx-auto items-center w-full"
+      >
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="orders">Orders</TabsTrigger>
@@ -100,20 +103,20 @@ const Profile = () => {
         {/* Account Tab */}
         <TabsContent value="profile">
           <div className="flex flex-col justify-center items-center bg-gray-100">
-            <h1 className="font-bold text-2xl text-gray-800 mb-8">
+            <h1 className="font-bold text-xl md:text-2xl text-gray-800 mb-6 md:mb-8">
               Update Profile
             </h1>
 
-            <div className="w-full flex gap-10 justify-between items-start px-7 max-w-2xl">
+            <div className="w-full flex flex-col md:flex-row gap-6 md:gap-10 justify-between items-center md:items-start px-2 md:px-7 max-w-2xl">
               {/* Profile Picture */}
               <div className="flex flex-col items-center">
                 <img
                   src={updateUser?.profilePic || userLogo}
                   alt="profile"
-                  className="w-32 h-32 rounded-full object-cover border-4 border-pink-800"
+                  className="w-24 h-24 md:w-32 md:h-32 rounded-full object-cover border-4 border-pink-800"
                 />
 
-                <Label className="mt-4 cursor-pointer bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700">
+                <Label className="mt-4 cursor-pointer bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 text-sm">
                   Change Picture
                   <Input
                     type="file"
@@ -127,9 +130,9 @@ const Profile = () => {
               {/* Profile Form */}
               <form
                 onSubmit={handleSubmit}
-                className="space-y-4 shadow-lg p-5 rounded-lg bg-white flex-1"
+                className="w-full space-y-4 shadow-lg p-4 md:p-5 rounded-lg bg-white flex-1"
               >
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <Label className="block text-sm font-medium">
                       First Name
@@ -196,27 +199,32 @@ const Profile = () => {
                     onChange={handleChange}
                   />
                 </div>
-                <div>
-                  <Label className="block text-sm font-medium">City</Label>
-                  <Input
-                    type="text"
-                    name="city"
-                    placeholder="Enter your City"
-                    className="mt-1"
-                    value={updateUser.city || ""}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div>
-                  <Label className="block text-sm font-medium">Zip Code</Label>
-                  <Input
-                    type="text"
-                    name="zipCode"
-                    placeholder="Enter your Zip Code"
-                    className="mt-1"
-                    value={updateUser.zipCode || ""}
-                    onChange={handleChange}
-                  />
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label className="block text-sm font-medium">City</Label>
+                    <Input
+                      type="text"
+                      name="city"
+                      placeholder="Enter your City"
+                      className="mt-1"
+                      value={updateUser.city || ""}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div>
+                    <Label className="block text-sm font-medium">
+                      Zip Code
+                    </Label>
+                    <Input
+                      type="text"
+                      name="zipCode"
+                      placeholder="Enter your Zip Code"
+                      className="mt-1"
+                      value={updateUser.zipCode || ""}
+                      onChange={handleChange}
+                    />
+                  </div>
                 </div>
 
                 <Button
@@ -256,7 +264,7 @@ const Profile = () => {
             </CardContent>
 
             <CardFooter>
-              <Button>Update Password</Button>
+              <Button className="w-full sm:w-auto">Update Password</Button>
             </CardFooter>
           </Card>
         </TabsContent>

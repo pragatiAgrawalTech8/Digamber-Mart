@@ -7,7 +7,12 @@ import { Separator } from "@/components/ui/separator";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 // import Stepper from "@/components/Stepper";
-import { addAddress, deleteAddress, setCart, setSelectedAddress } from "@/redux/productSlice";
+import {
+  addAddress,
+  deleteAddress,
+  setCart,
+  setSelectedAddress,
+} from "@/redux/productSlice";
 import axios from "axios";
 import { toast } from "sonner";
 
@@ -23,17 +28,21 @@ const AddressForm = () => {
     country: "",
   });
 
-  const { cart, addresses, selectedAddress } = useSelector((store) => store.product);
-//   const product = useSelector((store) => store.product);
+  const { cart, addresses, selectedAddress } = useSelector(
+    (store) => store.product,
+  );
+  //   const product = useSelector((store) => store.product);
 
-// console.log(product);
-  const [showForm, setShowForm] = useState(addresses?.length > 0 ? false : true);
+  // console.log(product);
+  const [showForm, setShowForm] = useState(
+    addresses?.length > 0 ? false : true,
+  );
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const subtotal = cart?.totalPrice
+  const subtotal = cart?.totalPrice;
   const shipping = subtotal > 50 ? 0 : 10;
-  const tax = parseFloat((subtotal * 0.05).toFixed(2))
+  const tax = parseFloat((subtotal * 0.05).toFixed(2));
   const total = subtotal + shipping + tax;
 
   const handleChange = (e) => {
@@ -55,7 +64,7 @@ const AddressForm = () => {
     setShowForm(false);
   };
 
-  console.log('cart', cart);
+  console.log("cart", cart);
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -64,7 +73,7 @@ const AddressForm = () => {
     document.body.appendChild(script);
   }, []);
 
-  const accessToken = localStorage.getItem("accessToken")
+  const accessToken = localStorage.getItem("accessToken");
   // const handlePayment = async () => {
   //   try {
   //     // Step 1: Create order on backend
@@ -130,102 +139,113 @@ const AddressForm = () => {
   //   }
   // }
   const handlePayment = async () => {
-  try {
-    const { data } = await axios.post("http://localhost:8000/api/v1/orders/create-order", {
-      products: cart?.items?.map(item => ({
-        productId: item.productId._id,
-        quantity: item.quantity,
-      })),
-      tax,
-      shipping,
-      amount: total,
-      currency: "INR",
-    }, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
+    try {
+      const { data } = await axios.post(
+        "http://localhost:8000/api/v1/orders/create-order",
+        {
+          products: cart?.items?.map((item) => ({
+            productId: item.productId._id,
+            quantity: item.quantity,
+          })),
+          tax,
+          shipping,
+          amount: total,
+          currency: "INR",
+        },
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        },
+      );
 
-    if (!data.success) return toast.error("Something went wrong");
+      if (!data.success) return toast.error("Something went wrong");
 
-    const options = {
-      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-      amount: data.order.amount,
-      currency: data.order.currency,
-      name: "Ekart",
-      description: "Order Payment",
-      order_id: data.order.id,
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: data.order.amount,
+        currency: data.order.currency,
+        name: "Ekart",
+        description: "Order Payment",
+        order_id: data.order.id,
 
-      handler: async function (response) {
-        // ✅ SUCCESS payment flow
-        try {
-          const verifyRes = await axios.post(
-            "http://localhost:5555/api/v1/orders/verify-payment",
-            response,
-            { headers: { Authorization: `Bearer ${accessToken}` } }
-          );
+        handler: async function (response) {
+          // ✅ SUCCESS payment flow
+          try {
+            const verifyRes = await axios.post(
+              "http://localhost:5555/api/v1/orders/verify-payment",
+              response,
+              { headers: { Authorization: `Bearer ${accessToken}` } },
+            );
 
-          if (verifyRes.data.success) {
-            toast.success("✅ Payment Successful!");
-            dispatch(setCart({ items: [], totalPrice: 0 }));
-            navigate("/order-success");
-          } else {
-            toast.error("❌ Payment Verification Failed");
+            if (verifyRes.data.success) {
+              toast.success("✅ Payment Successful!");
+              dispatch(setCart({ items: [], totalPrice: 0 }));
+              navigate("/order-success");
+            } else {
+              toast.error("❌ Payment Verification Failed");
+            }
+          } catch (error) {
+            toast.error("Error verifying payment");
           }
-        } catch (error) {
-          toast.error("Error verifying payment");
-        }
-      },
+        },
 
-      modal: {
-        ondismiss: async function () {
-          // ❌ Handle user closing the popup
-          await axios.post("http://localhost:5555/api/v1/orders/verify-payment", {
+        modal: {
+          ondismiss: async function () {
+            // ❌ Handle user closing the popup
+            await axios.post(
+              "http://localhost:5555/api/v1/orders/verify-payment",
+              {
+                razorpay_order_id: data.order.id,
+                paymentFailed: true,
+              },
+              {
+                headers: { Authorization: `Bearer ${accessToken}` },
+              },
+            );
+
+            toast.error("Payment cancelled or failed");
+          },
+        },
+
+        prefill: {
+          name: formData.fullName,
+          email: formData.email,
+          contact: formData.phone,
+        },
+        theme: { color: "#F472B6" },
+      };
+
+      const rzp = new window.Razorpay(options);
+
+      // ❌ Listen for payment failures
+      rzp.on("payment.failed", async function (response) {
+        await axios.post(
+          "http://localhost:5555/api/v1/orders/verify-payment",
+          {
             razorpay_order_id: data.order.id,
             paymentFailed: true,
-          }, {
+          },
+          {
             headers: { Authorization: `Bearer ${accessToken}` },
-          });
+          },
+        );
 
-          toast.error("Payment cancelled or failed");
-        },
-      },
-
-      prefill: {
-        name: formData.fullName,
-        email: formData.email,
-        contact: formData.phone,
-      },
-      theme: { color: "#F472B6" },
-    };
-
-    const rzp = new window.Razorpay(options);
-
-    // ❌ Listen for payment failures
-    rzp.on("payment.failed", async function (response) {
-      await axios.post("http://localhost:5555/api/v1/orders/verify-payment", {
-        razorpay_order_id: data.order.id,
-        paymentFailed: true,
-      }, {
-        headers: { Authorization: `Bearer ${accessToken}` },
+        toast.error("Payment Failed. Please try again.");
       });
 
-      toast.error("Payment Failed. Please try again.");
-    });
-
-    rzp.open();
-  } catch (error) {
-    console.error(error);
-    toast.error("Something went wrong while processing payment");
-  }
-};
-
+      rzp.open();
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong while processing payment");
+    }
+  };
 
   return (
-    <div className="max-w-7xl mx-auto grid place-items-center p-10">
+    <div className="max-w-7xl mx-auto grid place-items-center p-4 md:p-10">
       {/* <Stepper currentStep={1} /> Step 2: Address */}
 
-      <div className="grid grid-cols-2 items-start gap-20 mt-10 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-2 items-start gap-8 lg:gap-20 mt-6 md:mt-10 max-w-7xl mx-auto w-full">
         {/* LEFT SIDE */}
-        <div className="space-y-4 p-6 bg-white">
+        <div className="space-y-4 p-4 md:p-6 bg-white w-full">
           {showForm ? (
             // Address Input Form
             <>
@@ -274,7 +294,7 @@ const AddressForm = () => {
                   onChange={handleChange}
                 />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="city">City</Label>
                   <Input
@@ -298,7 +318,7 @@ const AddressForm = () => {
                   />
                 </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="zip">Zip Code</Label>
                   <Input
@@ -333,17 +353,19 @@ const AddressForm = () => {
               {addresses?.map((addr, index) => (
                 <div
                   key={index}
-                  className={`border p-4 rounded-md cursor-pointer relative ${selectedAddress === index
-                    ? "border-pink-600 bg-pink-50"
-                    : "border-gray-300"
-                    }`}
+                  className={`border p-4 rounded-md cursor-pointer relative pr-16 ${
+                    selectedAddress === index
+                      ? "border-pink-600 bg-pink-50"
+                      : "border-gray-300"
+                  }`}
                   onClick={() => dispatch(setSelectedAddress(index))}
                 >
                   <p className="font-medium">{addr.fullName}</p>
                   <p>{addr.phone}</p>
                   <p>{addr.email}</p>
                   <p>
-                    {addr.address}, {addr.city}, {addr.state}, {addr.zip}, {addr.country}
+                    {addr.address}, {addr.city}, {addr.state}, {addr.zip},{" "}
+                    {addr.country}
                   </p>
 
                   {/* Delete Button */}
@@ -379,8 +401,8 @@ const AddressForm = () => {
         </div>
 
         {/* RIGHT SIDE (Order Summary) */}
-        <div>
-          <Card className="w-[400px]">
+        <div className="w-full">
+          <Card className="w-full lg:w-[400px]">
             <CardHeader>
               <CardTitle>Order Summary</CardTitle>
             </CardHeader>

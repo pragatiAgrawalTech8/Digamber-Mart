@@ -85,8 +85,8 @@ const AddProduct = () => {
   };
 
   return (
-    <div className="pl-[350px] py-10 pr-20 mx-auto px-4 bg-gray-100">
-      <Card className="w-full my-20">
+    <div className="lg:pl-[100px] py-6 md:py-10 px-4 lg:pr-20 bg-gray-100 min-h-screen">
+      <Card className="w-full max-w-2xl mx-auto lg:max-w-none lg:mx-0 my-6 md:my-20">
         <CardHeader>
           <CardTitle>Add Product</CardTitle>
           <CardDescription>Enter product details below</CardDescription>
@@ -115,7 +115,7 @@ const AddProduct = () => {
                 required
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="grid gap-2">
                 <Label>Brand</Label>
                 <Input
@@ -165,7 +165,7 @@ const AddProduct = () => {
           >
             {loading ? (
               <span className="flex gap-1 items-center">
-                <Loader2 className="animate-spin " />
+                <Loader2 className="animate-spin" />
                 Please Wait
               </span>
             ) : (

@@ -2,7 +2,18 @@ import { Input } from "./ui/input";
 import React, { useState } from "react";
 import { Button } from "./ui/button";
 
-const FilterSidebar = ({ allProducts, brand,setBrand,category,setCategory,search,setSearch,setPriceRange,priceRange }) => {
+const FilterSidebar = ({
+  allProducts,
+  brand,
+  setBrand,
+  category,
+  setCategory,
+  search,
+  setSearch,
+  setPriceRange,
+  priceRange,
+  forceShow = false,
+}) => {
   const Categories = allProducts.map((p) => p.category);
   const UniqueCategory = ["All", ...new Set(Categories)];
 
@@ -10,39 +21,40 @@ const FilterSidebar = ({ allProducts, brand,setBrand,category,setCategory,search
   const UniqueBrand = ["All", ...new Set(Brands)];
   // console.log(UniqueBrand);
 
+  const handleCategoryClick = (val) => {
+    setCategory(val);
+  };
 
-  const handleCategoryClick = (val)=>{
-    setCategory(val)
-  }
+  const handleBrandChange = (e) => {
+    setBrand(e.target.value);
+  };
 
-  const handleBrandChange = (e)=>{
-    setBrand(e.target.value)
-  }
+  const handleMMinChange = (e) => {
+    const value = Number(e.target.value);
+    if (value <= priceRange[1]) setPriceRange([value, priceRange[1]]);
+  };
 
-  const handleMMinChange = (e)=>{
-    const value = Number(e.target.value)
-    if(value <= priceRange[1]) setPriceRange([value,priceRange[1]])
-   }
+  const handleMaxChange = (e) => {
+    const value = Number(e.target.value);
+    if (value >= priceRange[0]) setPriceRange([priceRange[0], value]);
+  };
 
-   const handleMaxChange =(e)=>{
-        const value = Number(e.target.value)
-    if(value >= priceRange[0]) setPriceRange([priceRange[0],value])
-   }
-
-   const resetFilter=()=>{
-    setSearch("")
-    setCategory("All")
-    setBrand("All")
-    setPriceRange([0,999999])
-   }
+  const resetFilter = () => {
+    setSearch("");
+    setCategory("All");
+    setBrand("All");
+    setPriceRange([0, 999999]);
+  };
   return (
-    <div className="bg-gray-100 mt-10 p-4 rounded-md h-max hidden md:block w-64">
+    <div
+      className={`bg-gray-100 mt-10 p-4 rounded-md h-max w-64 ${forceShow ? "block" : "hidden md:block"}`}
+    >
       {/* Search */}
       <Input
         type="text"
         placeholder="Search..."
-        value = {search}
-        onChange ={(e)=>setSearch(e.target.value)}
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
         className="bg-white p-2 rounded-md border-gray-400 border-2 w-full"
       />
 
@@ -52,7 +64,12 @@ const FilterSidebar = ({ allProducts, brand,setBrand,category,setCategory,search
       <div className="flex flex-col gap-2 mt-3">
         {UniqueCategory.map((item, index) => (
           <div key={index} className="flex items-center gap-2">
-            <input type="radio" name="category" checked = {category === item} onChange={()=>handleCategoryClick(item)}/>
+            <input
+              type="radio"
+              name="category"
+              checked={category === item}
+              onChange={() => handleCategoryClick(item)}
+            />
             <label htmlFor="">{item}</label>
           </div>
         ))}
@@ -60,7 +77,11 @@ const FilterSidebar = ({ allProducts, brand,setBrand,category,setCategory,search
       {/* brands */}
       <h1 className="mt-5 font-semibold text-xl">Brand</h1>
 
-      <select className="bg-white w-full p-2 border border-gray-200 rounded-md" value={brand} onChange={handleBrandChange}>
+      <select
+        className="bg-white w-full p-2 border border-gray-200 rounded-md"
+        value={brand}
+        onChange={handleBrandChange}
+      >
         {UniqueBrand.map((item, index) => {
           return (
             <option key={index} value={item}>
@@ -118,7 +139,6 @@ const FilterSidebar = ({ allProducts, brand,setBrand,category,setCategory,search
           className="w-full"
           value={priceRange[1]}
           onChange={handleMaxChange}
-          
         />
       </div>
 
