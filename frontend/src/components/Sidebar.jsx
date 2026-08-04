@@ -1,28 +1,116 @@
-import { LayoutDashboard,PackagePlus,PackageSearch,Users,ClipboardList } from 'lucide-react'
-import React from 'react'
-import { NavLink } from 'react-router-dom'
+import {
+  LayoutDashboard,
+  PackagePlus,
+  PackageSearch,
+  Users,
+  ClipboardList,
+  Menu,
+} from "lucide-react";
+import { NavLink } from "react-router-dom";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+
+const SidebarLinks = () => {
+  return (
+    <div className="space-y-3 mt-6">
+      <NavLink
+        to="/dashboard/sales"
+        className={({ isActive }) =>
+          `flex items-center gap-2 rounded-xl p-3 font-semibold ${
+            isActive
+              ? "bg-pink-600 text-white"
+              : "hover:bg-pink-100"
+          }`
+        }
+      >
+        <LayoutDashboard />
+        Dashboard
+      </NavLink>
+
+      <NavLink
+        to="/dashboard/add-product"
+        className={({ isActive }) =>
+          `flex items-center gap-2 rounded-xl p-3 font-semibold ${
+            isActive
+              ? "bg-pink-600 text-white"
+              : "hover:bg-pink-100"
+          }`
+        }
+      >
+        <PackagePlus />
+        Add Product
+      </NavLink>
+
+      <NavLink
+        to="/dashboard/products"
+        className={({ isActive }) =>
+          `flex items-center gap-2 rounded-xl p-3 font-semibold ${
+            isActive
+              ? "bg-pink-600 text-white"
+              : "hover:bg-pink-100"
+          }`
+        }
+      >
+        <PackageSearch />
+        Products
+      </NavLink>
+
+      <NavLink
+        to="/dashboard/users"
+        className={({ isActive }) =>
+          `flex items-center gap-2 rounded-xl p-3 font-semibold ${
+            isActive
+              ? "bg-pink-600 text-white"
+              : "hover:bg-pink-100"
+          }`
+        }
+      >
+        <Users />
+        Users
+      </NavLink>
+
+      <NavLink
+        to="/dashboard/orders"
+        className={({ isActive }) =>
+          `flex items-center gap-2 rounded-xl p-3 font-semibold ${
+            isActive
+              ? "bg-pink-600 text-white"
+              : "hover:bg-pink-100"
+          }`
+        }
+      >
+        <ClipboardList />
+        Orders
+      </NavLink>
+    </div>
+  );
+};
 
 const Sidebar = () => {
   return (
-    <div className='hidden fixed md:block border-r bg-pink-50 border-pink-200 x-10 w-[300px] p-10 space-y-2 h-screen'>
-      <div className='text-center pt-10 px-3 space-y-2'>
-        <NavLink to='/dashboard/sales' className={({isActive})=>`text-xl ${isActive ? "bg-pink-600 text-gray-200":"bg-transparent"} flex items-center gap-2 font-bold cursor-pointer p-3 rounded-2xl w-full`
-        }><LayoutDashboard/><span>Dashboard</span></NavLink>
-
-        <NavLink to='/dashboard/add-product' className={({isActive})=>`text-xl ${isActive ? "bg-pink-600 text-gray-200":"bg-transparent"} flex items-center gap-2 font-bold cursor-pointer p-3 rounded-2xl w-full`
-        }><PackagePlus/><span>Add Product</span></NavLink>
-
-        <NavLink to='/dashboard/products' className={({isActive})=>`text-xl ${isActive ? "bg-pink-600 text-gray-200":"bg-transparent"} flex items-center gap-2 font-bold cursor-pointer p-3 rounded-2xl w-full`
-        }><PackageSearch/><span>Products</span></NavLink>
-
-        <NavLink to='/dashboard/users' className={({isActive})=>`text-xl ${isActive ? "bg-pink-600 text-gray-200":"bg-transparent"} flex items-center gap-2 font-bold cursor-pointer p-3 rounded-2xl w-full`
-        }><Users/><span>Users</span></NavLink>
-
-        <NavLink to='/dashboard/orders' className={({isActive})=>`text-xl ${isActive ? "bg-pink-600 text-gray-200":"bg-transparent"} flex items-center gap-2 font-bold cursor-pointer p-3 rounded-2xl w-full`
-        }><ClipboardList/><span>Orders</span></NavLink>
+    <>
+      {/* Desktop Sidebar */}
+      <div className="hidden md:block fixed left-0 top-20 w-[300px] h-[calc(100vh-80px)] border-r bg-pink-50 p-6 overflow-y-auto">
+        <SidebarLinks />
       </div>
-    </div>
-  )
-}
 
-export default Sidebar
+      {/* Mobile Sidebar */}
+      <div className="md:hidden fixed top-24 left-4 z-50">
+        <Sheet>
+          <SheetTrigger>
+            <Menu className="w-8 h-8" />
+          </SheetTrigger>
+
+          <SheetContent side="left" className="w-[260px]">
+            <SidebarLinks />
+          </SheetContent>
+        </Sheet>
+      </div>
+    </>
+  );
+};
+
+export default Sidebar;

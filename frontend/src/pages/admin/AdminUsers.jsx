@@ -44,58 +44,77 @@ const AdminUsers = () => {
 
   console.log(users);
 
-  return (
-    <div className="pl-[100px] py-20 pr-20  mx-auto px-4 ">
-      <h1 className="font-bold text-2xl">User Management</h1>
-      <p>View and manage registered users</p>
-      <div className="flex relative w-[300px] mt-6">
-        <Search className="absolute left-2 top-1 text-gray-600 w-5" />
-        <Input
-          className="pl-10"
-          placeholder="Search Users..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-      <div className="grid grid-cols-3 gap-7 mt-7">
-        {filteredUsers?.map((user) => {
-          return (
-            <div className="bg-pink-100 p-5 rounded-lg">
-              <div className="flex items-center gap-2">
-                <img
-                  src={user?.profilePic || "/user.png"}
-                  alt="User"
-                  className="rounded-full w-16 aspect-square object-cover border border-pink-600"
-                />
-                <div>
-                  <h1 className="font-semibold">
-                    {user?.firstName} {user?.lastName}
-                  </h1>
-                  <h3>{user?.email}</h3>
-                </div>
-              </div>
-              <div className="flex gap-3 mt-3">
-                <Button
-                  onClick={() => navigate(`/dashboard/users/${user?._id}`)}
-                  variant="outline"
-                >
-                  <Edit />
-                  Edit
-                </Button>
-                <Button
-                  onClick={() =>
-                    navigate(`/dashboard/users/orders/${user?._id}`)}
-                >
-                  <Eye />
-                  Show Order
-                </Button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
+ return (
+  <div className="px-4 py-6 md:px-8 lg:px-10">
+    <h1 className="text-2xl md:text-3xl font-bold">User Management</h1>
+    <p className="text-gray-600 mt-1">
+      View and manage registered users
+    </p>
+
+    {/* Search */}
+    <div className="relative w-full max-w-sm mt-6">
+      <Search className="absolute left-3 top-3 w-5 h-5 text-gray-500" />
+      <Input
+        className="pl-10"
+        placeholder="Search Users..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
     </div>
-  );
+
+    {/* Users */}
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mt-8">
+      {filteredUsers?.map((user) => (
+        <div
+          key={user._id}
+          className="bg-pink-100 rounded-xl p-5 shadow-sm hover:shadow-md transition"
+        >
+          <div className="flex items-center gap-4">
+            <img
+              src={user?.profilePic || "/user.png"}
+              alt="User"
+              className="w-16 h-16 rounded-full object-cover border-2 border-pink-600"
+            />
+
+            <div className="min-w-0">
+              <h2 className="font-semibold text-lg truncate">
+                {user.firstName} {user.lastName}
+              </h2>
+
+              <p className="text-sm text-gray-600 break-all">
+                {user.email}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3 mt-5">
+            <Button
+              variant="outline"
+              className="flex-1"
+              onClick={() =>
+                navigate(`/dashboard/user/${user._id}`)
+              }
+            >
+              <Edit className="w-4 h-4 mr-2" />
+              Edit
+            </Button>
+
+            <Button
+              className="flex-1 bg-pink-600 hover:bg-pink-700"
+              onClick={() =>
+                navigate(`/dashboard/users/orders/${user._id}`)
+              }
+            >
+              <Eye className="w-4 h-4 mr-2" />
+              Orders
+            </Button>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+  
 };
 
 export default AdminUsers;
