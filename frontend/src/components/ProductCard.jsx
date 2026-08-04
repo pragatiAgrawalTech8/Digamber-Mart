@@ -16,7 +16,7 @@ const ProductCard = ({ product, loading }) => {
   const addToCart = async (productId) => {
     try {
       const res = await axios.post(
-        "https://digamber-mart-pzle.onrender.com/api/v1/cart/add",
+        "http://localhost:5555/api/v1/cart/add",
         { productId },
         {
           headers: {

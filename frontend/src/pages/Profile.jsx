@@ -71,7 +71,7 @@ const Profile = () => {
       }
 
       const res = await axios.put(
-        `https://digamber-mart-pzle.onrender.com/api/v1/user/update/${userId}`,
+        `http://localhost:5555/api/v1/user/update/${userId}`,
         formData,
         {
           headers: {

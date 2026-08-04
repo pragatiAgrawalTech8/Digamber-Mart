@@ -6,6 +6,7 @@ import cors from "cors"
 import userRoute from "./routes/userRoute.js"
 import productRoute from "./routes/productRoute.js"
 import cartRoute from "./routes/cartRoute.js"
+import orderRoute from "./routes/orderRoute.js"
 
 const app = express()
 const PORT = process.env.PORT || 5555
@@ -13,13 +14,14 @@ const PORT = process.env.PORT || 5555
 //middleware
 app.use(express.json())
 app.use(cors({
-  origin: "https://digamber-mart-org.netlify.app",
+  origin: "http://localhost:5173/",
   credentials: true
 }))
 
 app.use("/api/v1/user", userRoute)
 app.use("/api/v1/product", productRoute)
 app.use("/api/v1/cart", cartRoute)
+app.use("/api/v1/orders", orderRoute)
 try {
   await connectDB();
   app.listen(PORT, () => {

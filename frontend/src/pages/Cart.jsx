@@ -20,7 +20,7 @@ const Cart = () => {
   const total = subtotal + shipping + tax;
   const navigate = useNavigate();
 
-  const API = "https://digamber-mart-pzle.onrender.com/api/v1/cart";
+  const API = "http://localhost:5555/api/v1/cart";
   const accessToken = localStorage.getItem("accessToken");
 
   useEffect(() => {

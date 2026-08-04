@@ -42,7 +42,7 @@ const AdminUsers = () => {
     getAllUsers();
   }, []);
 
-  console.log(users);
+  // console.log(users);
 
  return (
   <div className="px-4 py-6 md:px-8 lg:px-10">

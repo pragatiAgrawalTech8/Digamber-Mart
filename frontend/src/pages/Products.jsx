@@ -30,9 +30,9 @@ const Products = () => {
     try {
       setLoading(true);
       const res = await axios.get(
-        "https://digamber-mart-pzle.onrender.com/api/v1/product/getallproducts",
+        "http://localhost:5555/api/v1/product/getallproducts",
       );
-
+      console.log(res.data);
       if (res.data.success) {
         setAllProducts(res.data.products);
         dispatch(setProducts(res.data.products));

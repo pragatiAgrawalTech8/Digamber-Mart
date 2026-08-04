@@ -26,16 +26,18 @@
 
 
 
-import mongoose from "mongoose"
-// connection for mongodb database.
+import mongoose from "mongoose";
+
 async function connectDB() {
-    try {
-        console.log(process.env.MONGO_URI);
-        await mongoose.connect(process.env.MONGO_URI, { dbName: "digamber" })
-        console.log("MongoDB connected successfully");
-    } catch (error) {
-        console.log("MongoDB connection failed", error);
-    }
+  try {
+    await mongoose.connect(process.env.MONGO_URI, {
+      dbName: "DigamberMart",
+    });
+
+    console.log("MongoDB connected successfully");
+  } catch (error) {
+    console.log("MongoDB connection failed", error);
+  }
 }
 
-export default connectDB
+export default connectDB;

@@ -41,7 +41,7 @@ const Signup = () => {
     try {
       setLoading(true);
       const res = await axios.post(
-        "https://digamber-mart-pzle.onrender.com/api/v1/user/register",
+        "http://localhost:5555/api/v1/user/register",
         formData,
         {
           headers: {

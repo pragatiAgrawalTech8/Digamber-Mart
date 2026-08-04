@@ -7,7 +7,7 @@ const VerifyEmail = () => {
   const navigate = useNavigate()
   const verifyEmail = async () => {
     try {
-      const res = await axios.post("https://digamber-mart-pzle.onrender.com/api/v1/user/verify", {}, {
+      const res = await axios.post("http://localhost:5555/api/v1/user/verify", {}, {
         headers: {
           Authorization: `Bearer ${token}`
         }

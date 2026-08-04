@@ -141,7 +141,7 @@ const AddressForm = () => {
   const handlePayment = async () => {
     try {
       const { data } = await axios.post(
-        "http://localhost:8000/api/v1/orders/create-order",
+        "http://localhost:5555/api/v1/orders/create-order",
         {
           products: cart?.items?.map((item) => ({
             productId: item.productId._id,
