@@ -19,7 +19,7 @@ const SingleProduct = () => {
       const fetchProducts = async () => {
         try {
           const res = await axios.get(
-            "http://localhost:5555/api/v1/product/getallproducts",
+            "https://digamber-mart-pzle.onrender.com/api/v1/product/getallproducts",
           );
           if (res.data.success) {
             dispatch(setProducts(res.data.products));

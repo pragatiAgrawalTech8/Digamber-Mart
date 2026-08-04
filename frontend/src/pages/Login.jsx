@@ -42,7 +42,7 @@ const Login = () => {
     try {
       setLoading(true);
       const res = await axios.post(
-        "http://localhost:5555/api/v1/user/login",
+        "https://digamber-mart-pzle.onrender.com/api/v1/user/login",
         formData,
         {
           headers: {
@@ -53,7 +53,7 @@ const Login = () => {
       if (res.data.success) {
         navigate("/");
         dispatch(setUser(res.data.user));
-        localStorage.setItem("accessToken",res.data.accessToken)
+        localStorage.setItem("accessToken", res.data.accessToken)
         toast.success(res.data.message);
       }
     } catch (error) {
