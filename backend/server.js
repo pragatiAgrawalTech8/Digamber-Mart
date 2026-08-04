@@ -13,12 +13,12 @@ const PORT = process.env.PORT || 5555
 //middleware
 app.use(express.json())
 app.use(cors({
-    origin:"http://localhost:5173",
-    credentials:true
+  origin: "https://bespoke-twilight-e6c323.netlify.app",
+  credentials: true
 }))
 
-app.use("/api/v1/user",userRoute)
-app.use("/api/v1/product",productRoute)
+app.use("/api/v1/user", userRoute)
+app.use("/api/v1/product", productRoute)
 app.use("/api/v1/cart", cartRoute)
 try {
   await connectDB();
