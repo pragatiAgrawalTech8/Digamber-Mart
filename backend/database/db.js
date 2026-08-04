@@ -28,13 +28,13 @@
 
 import mongoose from "mongoose"
 // connection for mongodb database.
- async function connectDB (){
+async function connectDB() {
     try {
         console.log(process.env.MONGO_URI);
-        await mongoose.connect(`mongodb://0.0.0.0:27017/DigamberMart`)
+        await mongoose.connect(process.env.MONGO_URI, { dbName: "digamber" })
         console.log("MongoDB connected successfully");
     } catch (error) {
-        console.log("MongoDB connection failed",error);
+        console.log("MongoDB connection failed", error);
     }
 }
 
