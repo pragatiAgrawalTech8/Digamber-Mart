@@ -9,32 +9,73 @@ import cloudinary from "../config/cloudinary.js";
 
 export const register = async (req, res) => {
     try {
-        const { firstName, lastName, email, password } = req.body
+        const { firstName, lastName, email, password } = req.body;
+
         if (!firstName || !lastName || !email || !password) {
-            return res.status(400).json({ success: false, message: 'All fields are required' })
+            return res.status(400).json({
+                success: false,
+                message: "All fields are required"
+            });
         }
-        const user = await User.findOne({ email })
-        if (user) {
-            return res.status(400).json({ success: false, message: 'user already exists' })
+
+        const existingUser = await User.findOne({ email });
+
+        if (existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: "User already exists"
+            });
         }
-        const hashedPassword = await bcrypt.hash(password, 10)
+
+        const hashedPassword = await bcrypt.hash(password, 10);
 
         const newUser = await User.create({
             firstName,
             lastName,
             email,
-            password: hashedPassword
-        })
+            password: hashedPassword,
+            isVerified: false
+        });
 
-        const token = jwt.sign({ id: newUser._id }, process.env.SECRET_KEY, { expiresIn: '10m' })
-        verifyEmail(token, email) // send email here
-        newUser.token = token
-        await newUser.save()
-        return res.status(201).json({ success: true, message: 'user registered successfully', user: newUser })
+
+        // Email verification token
+        const verifyToken = jwt.sign(
+            { id: newUser._id },
+            process.env.SECRET_KEY,
+            { expiresIn: "10m" }
+        );
+
+        await verifyEmail(verifyToken, email);
+
+
+        // Access token for frontend storage
+        const accessToken = jwt.sign(
+            { id: newUser._id },
+            process.env.SECRET_KEY,
+            { expiresIn: "7d" }
+        );
+
+
+        return res.status(201).json({
+            success: true,
+            message: "User registered successfully",
+            accessToken,
+            user: {
+                id: newUser._id,
+                firstName: newUser.firstName,
+                lastName: newUser.lastName,
+                email: newUser.email
+            }
+        });
+
+
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message })
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
     }
-}
+};
 
 export const verify = async (req, res) => {
     try {
@@ -344,108 +385,108 @@ export const getUserById = async (req, res) => {
 }
 
 export const updateUser = async (req, res) => {
-  try {
-    const userIdToUpdate = req.params.id; // the ID of the user we want to update
-    const loggedInUser = req.user; // from isAuthenticated middleware
-    const { firstName, lastName, address, city, zipCode, phoneNo, role } = req.body;
-  
-    // Check if user is authorized to update this profile
-    if (loggedInUser._id.toString() !== userIdToUpdate && loggedInUser.role !== 'admin') {
-      return res.status(403).json({
-        success: false,
-        message: "You are not allowed to update this profile"
-      });
+    try {
+        const userIdToUpdate = req.params.id; // the ID of the user we want to update
+        const loggedInUser = req.user; // from isAuthenticated middleware
+        const { firstName, lastName, address, city, zipCode, phoneNo, role } = req.body;
+
+        // Check if user is authorized to update this profile
+        if (loggedInUser._id.toString() !== userIdToUpdate && loggedInUser.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: "You are not allowed to update this profile"
+            });
+        }
+
+        // Find the user to update
+        let user = await User.findById(userIdToUpdate);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        // Handle profile picture upload
+        let profilePicUrl = user.profilePic;
+        let profilePicPublicId = user.profilePicPublicId;
+
+        // If a new file is uploaded
+        if (req.file) {
+            // Delete old image from Cloudinary if it exists
+            if (profilePicPublicId) {
+                await cloudinary.uploader.destroy(profilePicPublicId);
+            }
+
+            // Upload new image to Cloudinary
+            const uploadResult = await new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                    { folder: "profiles" },
+                    (error, result) => {
+                        if (error) reject(error);
+                        else resolve(result);
+                    }
+                );
+                stream.end(req.file.buffer);
+            });
+
+            profilePicUrl = uploadResult.secure_url;
+            profilePicPublicId = uploadResult.public_id;
+        }
+
+        // Update fields
+        user.firstName = firstName || user.firstName;
+        user.lastName = lastName || user.lastName;
+        user.address = address || user.address;
+        user.city = city || user.city;
+        user.zipCode = zipCode || user.zipCode;
+        user.phoneNo = phoneNo || user.phoneNo;
+        user.role = role || user.role; // Keep existing role if not provided
+        user.profilePic = profilePicUrl;
+        user.profilePicPublicId = profilePicPublicId;
+
+        const updatedUser = await user.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Profile Updated Successfully",
+            data: updatedUser
+        });
+
+    } catch (error) {
+        console.error("Update user error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+            error: error.message // Include error message for debugging
+        });
     }
-
-    // Find the user to update
-    let user = await User.findById(userIdToUpdate);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found"
-      });
-    }
-
-    // Handle profile picture upload
-    let profilePicUrl = user.profilePic;
-    let profilePicPublicId = user.profilePicPublicId;
-
-    // If a new file is uploaded
-    if (req.file) {
-      // Delete old image from Cloudinary if it exists
-      if (profilePicPublicId) {
-        await cloudinary.uploader.destroy(profilePicPublicId);
-      }
-
-      // Upload new image to Cloudinary
-      const uploadResult = await new Promise((resolve, reject) => {
-        const stream = cloudinary.uploader.upload_stream(
-          { folder: "profiles" },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          }
-        );
-        stream.end(req.file.buffer);
-      });
-
-      profilePicUrl = uploadResult.secure_url;
-      profilePicPublicId = uploadResult.public_id;
-    }
-
-    // Update fields
-    user.firstName = firstName || user.firstName;
-    user.lastName = lastName || user.lastName;
-    user.address = address || user.address;
-    user.city = city || user.city;
-    user.zipCode = zipCode || user.zipCode;
-    user.phoneNo = phoneNo || user.phoneNo;
-    user.role = role || user.role; // Keep existing role if not provided
-    user.profilePic = profilePicUrl;
-    user.profilePicPublicId = profilePicPublicId;
-
-    const updatedUser = await user.save();
-
-    return res.status(200).json({
-      success: true,
-      message: "Profile Updated Successfully",
-      data: updatedUser
-    });
-
-  } catch (error) {
-    console.error("Update user error:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Internal Server Error",
-      error: error.message // Include error message for debugging
-    });
-  }
 };
 
 export const getSingleUser = async (req, res) => {
-  try {
-    const { id } = req.params;
+    try {
+        const { id } = req.params;
 
-    const user = await User.findById(id).select("-password");
+        const user = await User.findById(id).select("-password");
 
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            user,
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            success: false,
+            message: error.message,
+        });
     }
-
-    return res.status(200).json({
-      success: true,
-      user,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
 };
 
 
