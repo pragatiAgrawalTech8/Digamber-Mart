@@ -22,6 +22,7 @@ import AdminOrders from './pages/admin/AdminOrders'
 import ShowUserOrders from './pages/admin/ShowUserOrders'
 import AdminUsers from './pages/admin/AdminUsers'
 import UserInfo from './pages/admin/UserInfo'
+import OrderSuccess from './pages/OrderSuccess'
 
 const router = createBrowserRouter([
   {
@@ -107,6 +108,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <AddressForm/>
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/order-success",
+    element: (
+      <ProtectedRoute>
+        <OrderSuccess/>
       </ProtectedRoute>
     ),
   },

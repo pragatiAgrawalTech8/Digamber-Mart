@@ -53,51 +53,83 @@ export const createOrder = async (req, res) => {
 // Verify Payment
 export const verifyPayment = async (req, res) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, paymentFailed } = req.body;
-    const userId = req.user._id;
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+      paymentFailed,
+    } = req.body;
 
-    // ❌ Handle failed or cancelled payment
+    const userId = req.id;
+
+    // Payment cancelled
     if (paymentFailed) {
-      const order = await Order.findOneAndUpdate(
-        { razorpayOrderId: razorpay_order_id },
-        { status: "Failed" },
-        { new: true }
-      );
-      return res.status(400).json({ success: false, message: "Payment failed", order });
-    }
-
-    // ✅ Handle successful payment
-    const body = razorpay_order_id + "|" + razorpay_payment_id;
-    const expectedSignature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_SECRET)
-      .update(body.toString())
-      .digest("hex");
-
-    if (expectedSignature === razorpay_signature) {
-      const order = await Order.findOneAndUpdate(
-        { razorpayOrderId: razorpay_order_id },
-        {
-          status: "Paid",
-          razorpayPaymentId: razorpay_payment_id,
-          razorpaySignature: razorpay_signature,
-        },
-        { new: true }
-      );
-
-      await Cart.findOneAndUpdate({ userId }, { $set: { items: [], totalPrice: 0 } });
-
-      return res.json({ success: true, message: "Payment successful", order });
-    } else {
       await Order.findOneAndUpdate(
         { razorpayOrderId: razorpay_order_id },
-        { status: "Failed" },
-        { new: true }
+        { status: "Failed" }
       );
-      return res.status(400).json({ success: false, message: "Invalid signature" });
+
+      return res.status(400).json({
+        success: false,
+        message: "Payment Failed",
+      });
     }
+
+    const body = razorpay_order_id + "|" + razorpay_payment_id;
+
+    // IMPORTANT
+    const expectedSignature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .update(body)
+      .digest("hex");
+
+    if (expectedSignature !== razorpay_signature) {
+      await Order.findOneAndUpdate(
+        { razorpayOrderId: razorpay_order_id },
+        { status: "Failed" }
+      );
+
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Signature",
+      });
+    }
+
+    // Payment Success
+    const order = await Order.findOneAndUpdate(
+      { razorpayOrderId: razorpay_order_id },
+      {
+        status: "Paid",
+        razorpayPaymentId: razorpay_payment_id,
+        razorpaySignature: razorpay_signature,
+      },
+      { new: true }
+    );
+
+    // Empty Cart
+    await Cart.findOneAndUpdate(
+      { userId },
+      {
+        $set: {
+          items: [],
+          totalPrice: 0,
+        },
+      },
+      { new: true }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Payment Successful",
+      order,
+    });
   } catch (error) {
-    console.error("❌ Error in verifyPayment:", error);
-    res.status(500).json({ success: false, message: error.message });
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 

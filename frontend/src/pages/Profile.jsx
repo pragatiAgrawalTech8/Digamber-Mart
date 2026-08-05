@@ -18,6 +18,7 @@ import userLogo from "/user.png";
 import axios from "axios";
 import { toast } from "sonner";
 import { setUser } from "@/redux/userSlice";
+import MyOrder from './MyOrder';
 
 const Profile = () => {
   const { user } = useSelector((store) => store.user);
@@ -240,33 +241,7 @@ const Profile = () => {
 
         {/* Password Tab */}
         <TabsContent value="orders">
-          <Card>
-            <CardHeader>
-              <CardTitle>Password</CardTitle>
-              <CardDescription>Change your password here.</CardDescription>
-            </CardHeader>
-
-            <CardContent className="space-y-4">
-              <div className="grid gap-2">
-                <Label htmlFor="currentPassword">Current Password</Label>
-                <Input id="currentPassword" type="password" />
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="newPassword">New Password</Label>
-                <Input id="newPassword" type="password" />
-              </div>
-
-              <div className="grid gap-2">
-                <Label htmlFor="confirmPassword">Confirm Password</Label>
-                <Input id="confirmPassword" type="password" />
-              </div>
-            </CardContent>
-
-            <CardFooter>
-              <Button className="w-full sm:w-auto">Update Password</Button>
-            </CardFooter>
-          </Card>
+          <MyOrder/>
         </TabsContent>
       </Tabs>
     </div>
