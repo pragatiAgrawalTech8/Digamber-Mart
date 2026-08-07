@@ -23,7 +23,7 @@ const MyOrder = () => {
     getUserOrders()
   }, [])
 
-  console.log(userOrder);
+  // console.log(userOrder);
 
   return (
   <div className="min-h-screen bg-gray-100 pt-24 pb-8 px-4 sm:px-6 lg:px-8">

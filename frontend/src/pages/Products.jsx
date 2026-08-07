@@ -32,7 +32,7 @@ const Products = () => {
       const res = await axios.get(
         "http://localhost:5555/api/v1/product/getallproducts",
       );
-      console.log(res.data);
+      // console.log(res.data);
       if (res.data.success) {
         setAllProducts(res.data.products);
         dispatch(setProducts(res.data.products));

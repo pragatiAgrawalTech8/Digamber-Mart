@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "./ui/button";
 const Hero = () => {
   return (
-    <section className="bg-gradient-to-r from-pink-700 to-black text-white py-16">
+    <section className="bg-gradient-to-r from-pink-500 to-gray-800 text-white py-16">
       <div className="max-w-7xl mx-auto px-4">
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div>

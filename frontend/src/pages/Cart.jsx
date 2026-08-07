@@ -13,7 +13,7 @@ import { setCart } from "@/redux/productSlice";
 const Cart = () => {
   const dispatch = useDispatch();
   const { cart } = useSelector((store) => store.product);
-  console.log(cart);
+  // console.log(cart);
   const subtotal = cart?.totalPrice;
   const shipping = subtotal > 299 ? 0 : 10;
   const tax = subtotal * 0.05;

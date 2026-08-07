@@ -65,7 +65,7 @@ const AddressForm = () => {
     setShowForm(false);
   };
 
-  console.log("cart", cart);
+  // console.log("cart", cart);
 
   useEffect(() => {
     const script = document.createElement("script");

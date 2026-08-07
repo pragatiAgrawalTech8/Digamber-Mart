@@ -18,23 +18,32 @@ const NavBar = () => {
 
   const logoutHandler = async () => {
     try {
+      const token = localStorage.getItem("accessToken");
+
+      console.log("Logout Token:", token);
+
       const res = await axios.post(
         "http://localhost:5555/api/v1/user/logout",
         {},
         {
           headers: {
-            Authorization: `Bearer ${accessToken}`,
+            Authorization: `Bearer ${token}`,
           },
         },
       );
 
+      console.log("Logout Success:", res.data);
+
       if (res.data.success) {
+        localStorage.removeItem("accessToken");
         dispatch(setUser(null));
         toast.success(res.data.message);
-        setMenuOpen(false);
+        navigate("/login");
       }
     } catch (error) {
-      console.log(error);
+      console.log("Logout Error:", error.response?.data);
+      console.log("Status:", error.response?.status);
+      console.log("Data:", error.response?.data);
     }
   };
 
@@ -42,8 +51,6 @@ const NavBar = () => {
     <header className="bg-pink-50 fixed w-full z-20 border-b border-pink-200">
       <div className="max-w-7xl mx-auto flex justify-between items-center py-3 px-4">
         <Logo className="h-12 md:h-16 w-auto" />
-
-        {/* Desktop Nav */}
         <nav className="hidden md:flex gap-10 justify-between items-center">
           <ul className="flex gap-7 items-center text-xl font-semibold">
             <Link to={"/"}>

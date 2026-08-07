@@ -5,7 +5,7 @@ const AdminOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const accessToken = localStorage.getItem("accessToken");
-  console.log("orders", orders);
+  // console.log("orders", orders);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -34,10 +34,10 @@ const AdminOrders = () => {
     );
   }
   return (
-    <div className="lg:pl-[330px] xl:pl-[350px] pt-24 lg:pt-20 px-4 md:px-6 lg:pr-8 pb-10">
-      <h1 className="text-2xl md:text-3xl font-bold mb-6">
-        Admin - All Orders
-      </h1>
+    <div className=" pt-24 lg:pt-20 px-4 md:px-6 lg:pr-8 pb-10">
+    <h1 className="text-2xl md:text-3xl font-bold mb-6">
+      Admin - All Orders
+    </h1>
 
       {orders.length === 0 ? (
         <p className="text-gray-500">No orders found.</p>

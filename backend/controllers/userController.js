@@ -181,7 +181,9 @@ export const login = async (req, res) => {
         //generate token
         const accessToken = jwt.sign({ id: existingUser._id }, process.env.SECRET_KEY, { expiresIn: "10d" })
         const refreshToken = jwt.sign({ id: existingUser._id }, process.env.SECRET_KEY, { expiresIn: "30d" })
-
+        console.log("Logged User ID:", existingUser._id);
+        console.log("Logged User Email:", existingUser.email);
+        console.log("Generated Token:", accessToken);
         existingUser.isLoggedIn = true
         await existingUser.save()
 
@@ -202,6 +204,7 @@ export const login = async (req, res) => {
 
 
     } catch (error) {
+        console.log("Login Error:", error)
         res.status(500).json({
             success: false,
             message: error.message
@@ -210,7 +213,9 @@ export const login = async (req, res) => {
 }
 
 export const logout = async (req, res) => {
+    console.log("Logout controller called");
     try {
+        console.log(req.id)
         const userId = req.id
         await Session.deleteMany({ userId: userId })
         await User.findByIdAndUpdate(userId, { isLoggedIn: false })
@@ -348,6 +353,7 @@ export const changePassword = async (req, res) => {
 }
 
 export const allUser = async (_, res) => {
+    console.log("allUser controller called")
     try {
         const users = await User.find()
         return res.status(200).json({
@@ -488,6 +494,33 @@ export const getSingleUser = async (req, res) => {
         });
     }
 };
+export const makeAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
 
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    user.role = "admin";
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "User promoted to Admin",
+      user,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 

@@ -215,6 +215,7 @@ const Logo = ({ className = "h-16 w-auto" }) => {
         fontStyle="italic"
         fill="#202020"
         letterSpacing="1"
+        fontWeight="700"
       >
         Digamber
       </text>
@@ -234,6 +235,7 @@ const Logo = ({ className = "h-16 w-auto" }) => {
         x="130"
         y="138"
         fontFamily="'Poppins', sans-serif"
+        
         fontSize="26"
         fontWeight="500"
         letterSpacing="7"
