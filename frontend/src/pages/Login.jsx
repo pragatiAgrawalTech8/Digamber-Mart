@@ -38,7 +38,7 @@ const Login = () => {
   };
   const submitHandler = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    // console.log(formData);
     try {
       setLoading(true);
       const res = await axios.post(
@@ -53,7 +53,7 @@ const Login = () => {
       if (res.data.success) {
         navigate("/");
         dispatch(setUser(res.data.user));
-        localStorage.setItem("accessToken", res.data.accessToken)
+        localStorage.setItem("accessToken", res.data.accessToken);
         toast.success(res.data.message);
       }
     } catch (error) {
@@ -147,6 +147,14 @@ const Login = () => {
                   />
                 )}
               </div>
+            </div>
+            <div className="text-right">
+              <Link
+                to="/forgot-password"
+                className="text-sm text-pink-600 hover:underline font-medium"
+              >
+                Forgot Password?
+              </Link>
             </div>
           </div>
         </CardContent>

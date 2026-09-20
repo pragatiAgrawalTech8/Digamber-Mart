@@ -41,10 +41,38 @@ const Footer = () => {
         <div className="mb-6 md:mb-0">
           <h3 className="text-xl font-semibold">Follow Us</h3>
           <div className="flex space-x-4 mt-2">
-            <FaFacebook />
-            <FaInstagram />
-            <FaTwitterSquare />
-            <FaPinterest />
+            <a
+              href="https://www.facebook.com/share/18xbSrxxeb/?mibextid=wwXlfr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-pink-600 transition-colors"
+            >
+              <FaFacebook size={24} />
+            </a>
+             <a
+              href="https://www.instagram.com/digambermart?sktn=MWo1NXlvb3RvajJxeg%3D%3D&utm_source=qr"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-pink-600 transition-colors"
+            >
+              <FaInstagram size={24} />
+            </a>
+            {/* <a
+              href="https://twitter.com/yourpage"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-pink-600 transition-colors"
+            >
+              <FaTwitterSquare size={24} />
+            </a> */}
+            {/* <a
+              href="https://www.pinterest.com/yourpage"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-pink-600 transition-colors"
+            >
+              <FaPinterest size={24} />
+            </a> */}
           </div>
         </div>
         {/* newsletter subscription */}

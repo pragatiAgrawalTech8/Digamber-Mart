@@ -292,7 +292,7 @@ export const verifyOTP = async (req, res) => {
                 message: "Otp has expired please request a new one"
             })
         }
-        if (otp !== user.otp) {
+        if (Number(otp) !== Number(user.otp)) {
             return res.status(400).json({
                 success: false,
                 message: "Otp is Invalid"
@@ -309,7 +309,7 @@ export const verifyOTP = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: "error.message"
+            message: error.message
         })
     }
 }
